@@ -1,0 +1,8 @@
+.idea
+.idea/*
+main
+main.exe
+ts-client
+ts-server
+ts-client.exe
+ts-server.exe
