@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
 	"searcher/common"
 )
 
@@ -15,7 +16,11 @@ func main() {
 
 	flag.Parse()
 
-    fmt.Println(*config.Password,*config.Port,*config.Addr)
-
+	var a,b int
+	_,err := fmt.Fscanf(os.Stdin,"> %d %d",&a,&b)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	fmt.Println(a,b)
 }
 
