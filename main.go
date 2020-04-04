@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"os"
@@ -16,15 +17,16 @@ func main() {
 
 	flag.Parse()
 
-	var a,b int
+
+	f := bufio.NewReader(os.Stdin)
 	for {
-		fmt.Fprintf(os.Stdout,"\033[31m$>>>>>\033[0m")
-		_,err := fmt.Fscanf(os.Stdin,"%d %d",&a,&b)
-		if err != nil {
-			fmt.Println("")
-			continue
-		}
-		fmt.Println(a,b)
+		_,_=fmt.Fprintf(os.Stdout,"[32m>>>>>[33m")
+		res,_,_:= f.ReadLine()
+		//if err != nil {
+		//	fmt.Println("")
+		//	continue
+		//}
+       fmt.Println(string(res))
 	}
 
 
