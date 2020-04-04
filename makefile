@@ -1,6 +1,6 @@
 client:
-    go build main.go -o ts-client
+	go build -o ts-client main.go
 
 
 clean:
-    rm -rf ts-client
+	rm -rf ts-client
