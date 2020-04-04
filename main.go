@@ -17,10 +17,16 @@ func main() {
 	flag.Parse()
 
 	var a,b int
-	_,err := fmt.Fscanf(os.Stdin,"> %d %d",&a,&b)
-	if err != nil {
-		fmt.Println(err.Error())
+	for {
+		fmt.Fprintf(os.Stdout,"\033[31m$>>>>>\033[0m")
+		_,err := fmt.Fscanf(os.Stdin,"%d %d",&a,&b)
+		if err != nil {
+			fmt.Println("")
+			continue
+		}
+		fmt.Println(a,b)
 	}
-	fmt.Println(a,b)
+
+
 }
 
