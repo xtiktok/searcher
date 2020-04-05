@@ -6,3 +6,5 @@ ts-client
 ts-server
 ts-client.exe
 ts-server.exe
+client/client.exe
+server/server.exe
