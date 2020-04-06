@@ -27,6 +27,10 @@ func DoHSet(args []string) error {
 		return errors.New(consts.ErrorInternalError)
 	}
 
+	store.Range(func(key, value interface{}) bool {
+		return true
+	})
+
 	for i := 0; i < len(args)/2; i++ {
 		store.Store(args[2*i+1], args[2*i+2])
 	}

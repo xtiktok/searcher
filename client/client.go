@@ -48,11 +48,13 @@ func main() {
 
 		if err != nil && err.Error() == consts.ErrorNilReturn {
 			_, _ = fmt.Fprintf(os.Stdout, "\033[37m%s\n", err.Error())
+			_, _ = fmt.Fprintf(os.Stdout, "\033[32m%s>\033[33m", name)
 			continue
 		}
 
 		if err != nil {
 			_, _ = fmt.Fprintf(os.Stdout, "\033[31m%s\n", err.Error())
+			_, _ = fmt.Fprintf(os.Stdout, "\033[32m%s>\033[33m", name)
 			continue
 		}
 		OutPutPrint(resp)
