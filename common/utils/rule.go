@@ -30,7 +30,7 @@ func ArgsCheck(args []string, rule *dto.Rule) error {
 
 	for i, t := range rule.TypeCheck {
 		if len(args) <= i {
-			return errors.New("wrong syntax")
+			return nil
 		}
 		switch t {
 		case consts.RuleTypeInt:

@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
@@ -21,6 +22,8 @@ func init() {
 	res = make(map[string]string)
 }
 
+var name = "ts_client"
+
 func main() {
 
 	conf := config.ClientConfig{}
@@ -29,7 +32,7 @@ func main() {
 	conf.Password = flag.String("P", "", "auth password")
 
 	flag.Parse()
-	name := "ts_client"
+
 	f := bufio.NewReader(os.Stdin)
 	conn, err := net.Dial("tcp", fmt.Sprintf("%s:%d", *conf.Addr, *conf.Port))
 	if err != nil {
@@ -37,10 +40,11 @@ func main() {
 		return
 	}
 	defer conn.Close()
+	_, _ = fmt.Fprintf(os.Stdout, "\033[32m%s>\033[33m", name)
 	for {
-		_, _ = fmt.Fprintf(os.Stdout, "\033[32m%s>\033[33m", name)
 		res, _, _ := f.ReadLine()
-		resp, err := InputHandle(&conn, string(res))
+		input := string(res)
+		resp, err := InputHandle(&conn, input)
 
 		if err != nil && err.Error() == consts.ErrorNilReturn {
 			_, _ = fmt.Fprintf(os.Stdout, "\033[37m%s\n", err.Error())
@@ -51,15 +55,29 @@ func main() {
 			_, _ = fmt.Fprintf(os.Stdout, "\033[31m%s\n", err.Error())
 			continue
 		}
-		if resp == "" {
-			continue
-		}
-		_, _ = fmt.Fprintf(os.Stdout, "\033[33m%s\n", resp)
+		OutPutPrint(resp)
 	}
-
 }
 
-func InputHandle(conn *net.Conn, argsStr string) (string, error) {
+func OutPutPrint(v interface{}) {
+	res, ok := v.(string)
+	if ok {
+		if res == "" {
+			_, _ = fmt.Fprintf(os.Stdout, "\033[32m%s>\033[33m", name)
+			return
+		}
+		_, _ = fmt.Fprintf(os.Stdout, "\033[33m%s\n", res)
+	}
+	resMap, ok := v.(map[string]interface{})
+	if ok {
+		for key, value := range resMap {
+			_, _ = fmt.Fprintf(os.Stdout, "\033[33m%s => %v\n", key, value)
+		}
+	}
+	_, _ = fmt.Fprintf(os.Stdout, "\033[32m%s>\033[33m", name)
+}
+
+func InputHandle(conn *net.Conn, argsStr string) (interface{}, error) {
 	var heads [9]byte
 	if conn == nil {
 		return "", errors.New("not connected")
@@ -73,6 +91,9 @@ func InputHandle(conn *net.Conn, argsStr string) (string, error) {
 	params := spaceRe.Split(argsStr, -1)
 	if len(params) == 0 {
 		return "", nil
+	}
+	for i := range params {
+		params[i] = strings.Trim(params[i], "\"")
 	}
 
 	command := params[0]
@@ -112,5 +133,16 @@ func InputHandle(conn *net.Conn, argsStr string) (string, error) {
 		return "", err
 	}
 	p := strings.TrimSpace(body.Body)
+	if body.VarType == consts.StringVar {
+		return p, nil
+	}
+	if body.VarType == consts.Map {
+		resp := make(map[string]interface{})
+		err = json.Unmarshal([]byte(p), &resp)
+		if err != nil {
+			return p, nil
+		}
+		return resp, nil
+	}
 	return p, nil
 }

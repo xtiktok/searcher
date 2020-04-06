@@ -6,6 +6,7 @@ const (
 	StringVar
 	Float64Var
 	IntArray
+	Map
 	StringArray
 	FloatArray
 )

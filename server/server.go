@@ -8,17 +8,6 @@ import (
 	"searcher/storage"
 )
 
-type Pack struct {
-	Tag  string `json:"tag"`  //消息识别标记
-	Type int16  `json:"type"` //消息类型
-	Msg  string `json:"msg"`  //其他消息
-}
-
-var ResMap map[string]string
-
-func init() {
-	ResMap = make(map[string]string)
-}
 func main() {
 	listen, err := net.Listen("tcp", "0.0.0.0:6379")
 	if err != nil {
@@ -32,6 +21,7 @@ func main() {
 		}
 		tsConn := &dto.TsConn{}
 		tsConn.Conn = conn
+
 		go handle(tsConn)
 	}
 }
@@ -63,7 +53,7 @@ func handle(tsConn *dto.TsConn) {
 			args = model.ParseBody(data)
 		}
 
-		fmt.Println(header.Type, args)
+		// 操作存储
 		body, _ := storage.DoAction(header.Type, args)
 		resp := model.BuildResponse(body)
 		_, err = conn.Write(*resp)

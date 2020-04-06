@@ -15,6 +15,7 @@ const (
 	StringDel    = 6005
 	StringExpire = 6006
 	StringTtl    = 6007
+	StringIncr   = 6008
 
 	HashHSet    = 6101
 	HashHGet    = 6102
@@ -36,6 +37,7 @@ var Command = map[string]uint16{
 	"del":      StringDel,
 	"expire":   StringExpire,
 	"ttl":      StringTtl,
+	"incr":     StringIncr,
 
 	"hset":    HashHSet,
 	"hget":    HashHGet,
@@ -43,6 +45,27 @@ var Command = map[string]uint16{
 	"hdel":    HashHDel,
 	"watch":   NotifyWatch,
 	"keys":    KeysAll,
+}
+
+var CommandMap = map[uint16]string{
+	ShutDown:     "shutdown",
+	Restart:      "restart",
+	Auth:         "auth",
+	StringSet:    "set",
+	StringGet:    "get",
+	StringSetEx:  "setex",
+	StringSetNx:  "setnx",
+	StringDel:    "del",
+	StringExpire: "expire",
+	StringTtl:    "ttl",
+	StringIncr:   "incr",
+
+	HashHSet:    "hset",
+	HashHGet:    "hget",
+	HashHGetAll: "hgetall",
+	HashHDel:    "hdel",
+	NotifyWatch: "watch",
+	KeysAll:     "keys",
 }
 
 var CommandRule = map[string]*dto.Rule{
@@ -74,7 +97,7 @@ var CommandRule = map[string]*dto.Rule{
 		OddEvenCheck: 0,
 	},
 	"expire": {
-		Argc:         1,
+		Argc:         2,
 		OddEvenCheck: 0,
 		TypeCheck: map[int]uint{
 			1: RuleTypeUInt,
@@ -85,6 +108,15 @@ var CommandRule = map[string]*dto.Rule{
 		OddEvenCheck: 0,
 		TypeCheck:    nil,
 	},
+	"incr": {
+		Argc:         -1,
+		Max:          2,
+		Min:          1,
+		OddEvenCheck: 0,
+		TypeCheck: map[int]uint{
+			1: RuleTypeInt64,
+		},
+	},
 
 	"hset": {
 		Argc:         -1,
@@ -92,13 +124,13 @@ var CommandRule = map[string]*dto.Rule{
 		Min:          3,
 	},
 	"hget": {
-		Argc:         2,
-		OddEvenCheck: 0,
-	},
-	"hgetall": {
 		Argc:         -1,
 		OddEvenCheck: 0,
 		Min:          2,
+	},
+	"hgetall": {
+		Argc:         1,
+		OddEvenCheck: 0,
 	},
 	"hdel": {
 		Argc:         -1,
