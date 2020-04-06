@@ -18,7 +18,7 @@ func (ts *TsResponse) AddBody(body *ResponseBody) {
 	*ts = append(*ts, body.VarType)
 	var length [4]byte
 	lengthInt := len(body.Body)
-	length[0] = uint8((lengthInt & 0xff000000) >> 24)
+	length[0] = uint8((uint32(lengthInt) & 0xff000000) >> 24)
 	length[1] = uint8((lengthInt & 0x00ff0000) >> 16)
 	length[2] = uint8((lengthInt & 0x0000ff00) >> 8)
 	length[3] = uint8(lengthInt & 0x000000ff)
